@@ -7,6 +7,7 @@ import AppPanel from './components/AppPanel.vue'
 import AppLoader from './components/AppLoader.vue'
 import AppErrorMessage from './components/AppErrorMessage.vue'
 import MovieList from './components/MovieList.vue'
+import SelectedMovie from './components/SelectedMovie.vue'
 
 export interface Movie {
   Title: string
@@ -23,6 +24,7 @@ const query = ref('')
 const movies = ref<Movie[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
+const selectedMovieID = ref<string | null>(null)
 
 watchDebounced(
   query,
@@ -50,8 +52,19 @@ function updateQuery(value: string) {
   query.value = value
 }
 
+function selectMovie(id: string) {
+  selectedMovieID.value = selectedMovieID.value === id ? null : id
+}
+
+function closeSelectedMovie() {
+  selectedMovieID.value = null
+}
+
 provide('query', { query, updateQuery })
 provide('movies', movies)
+provide('selectMovie', selectMovie)
+provide('selectedMovieID', selectedMovieID)
+provide('closeSelectedMovie', closeSelectedMovie)
 </script>
 
 <template>
@@ -61,9 +74,13 @@ provide('movies', movies)
     <TheHeader />
     <main class="grid grid-cols-2 justify-center gap-8">
       <AppPanel>
-        <AppLoader v-if="isLoading" />
+        <AppLoader v-if="isLoading" class="absolute inset-0 m-auto" />
         <AppErrorMessage v-else-if="error" :message="error" />
         <MovieList v-else />
+      </AppPanel>
+
+      <AppPanel class="sticky top-10 h-min">
+        <SelectedMovie v-if="selectedMovieID" />
       </AppPanel>
     </main>
   </div>

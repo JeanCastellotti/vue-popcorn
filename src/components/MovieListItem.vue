@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import type { Movie } from '@/App.vue'
 
 defineProps<Movie>()
 
-function selectMovie(id: string) {}
+const selectMovie = inject('selectMovie') as (movieID: string) => void
 </script>
 
 <template>
