@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { inject } from 'vue'
 import type { Movie } from '@/App.vue'
+import { inject } from 'vue'
 
 const movies = inject('movies') as Movie[]
 </script>
