@@ -6,7 +6,7 @@ import HeaderSearchResults from './HeaderSearchResults.vue'
 
 <template>
   <header
-    class="mb-10 flex items-center justify-between rounded bg-[#6741d9] px-10 py-5"
+    class="mb-10 flex items-center justify-between rounded bg-indigo-600 px-10 py-5"
   >
     <TheLogo />
     <HeaderSearch />

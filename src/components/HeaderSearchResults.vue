@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import type { Movie } from '@/App.vue'
-import { inject } from 'vue'
-
-const movies = inject('movies') as Movie[]
+import { store } from '@/store'
 </script>
 
 <template>
-  <p class="text-xl">
+  <p class="text-xl text-indigo-200">
     Found
-    <strong>{{ movies.length }}</strong>
+    <strong>{{ store.movies.length }}</strong>
     results
   </p>
 </template>

@@ -1,74 +1,65 @@
 <script setup lang="ts">
-import { inject, ref, watchEffect, type Ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import AppLoader from './AppLoader.vue'
 import IconArrowUturnLeft from './IconArrowUturnLeft.vue'
+import { store } from '@/store'
 
 const apiKey = import.meta.env.VITE_API_KEY
 const apiUrl = import.meta.env.VITE_API_URL
 
-interface SelectedMovie {
-  Title: string
-  Year: string
-  Poster: string
-  Runtime: string
-  imdbRating: string
-  Plot: string
-  Released: string
-  Actors: string
-  Director: string
-  Genre: string
-}
-
 const isLoading = ref(false)
-const selectedMovie = ref<SelectedMovie | null>(null)
-
-const selectedMovieID = inject('selectedMovieID') as Ref<string>
+const error = ref<string | null>(null)
 
 watchEffect(async () => {
   isLoading.value = true
-  const res = await fetch(
-    `${apiUrl}/?apikey=${apiKey}&i=${selectedMovieID.value}`
-  )
-  const data = await res.json()
-  selectedMovie.value = data
-  isLoading.value = false
+
+  try {
+    const url = `${apiUrl}/?apikey=${apiKey}&i=${store.selectedMovieID}`
+    const res = await fetch(url)
+    const data = await res.json()
+    store.selectedMovie = data
+  } catch (err) {
+    error.value = (err as Error).message
+  } finally {
+    isLoading.value = false
+  }
 })
 
-const close = inject('closeSelectedMovie') as () => void
+const hasPoster = computed(() => store.selectedMovie?.Poster === 'N/A')
 </script>
 
 <template>
   <div class="relative">
     <AppLoader v-if="isLoading" class="mx-auto my-5" />
-    <template v-else-if="selectedMovie">
+    <template v-else-if="store.selectedMovie">
       <button
-        @click="close"
-        class="absolute left-2 top-2 z-50 flex aspect-square h-12 cursor-pointer items-center justify-center rounded-full bg-white text-[#2b3035] shadow-[0_8px_20px_rgba(0,0,0,0.8)]"
+        @click="store.closeSelectedMovie()"
+        class="absolute left-2 top-2 z-50 flex aspect-square h-12 cursor-pointer items-center justify-center rounded-full bg-white text-gray-800 shadow"
       >
         <IconArrowUturnLeft />
       </button>
       <header class="flex">
-        <div
-          v-if="selectedMovie?.Poster === 'N/A'"
-          class="flex w-1/3 shrink-0 bg-slate-600"
-        >
+        <div v-if="hasPoster" class="flex w-1/3 shrink-0 bg-gray-600">
           <span class="m-auto text-4xl">?</span>
         </div>
         <img
           v-else
-          :src="selectedMovie?.Poster"
-          :alt="selectedMovie?.Poster"
+          :src="store.selectedMovie.Poster"
+          :alt="store.selectedMovie.Poster"
           class="w-1/3 object-cover"
         />
-        <div class="w-full space-y-2 bg-[#343a40] px-12 py-10">
-          <h2 class="mb-2 text-xl font-bold">{{ selectedMovie?.Title }}</h2>
+        <div class="w-full space-y-2 bg-gray-700 px-12 py-10">
+          <h2 class="mb-2 text-xl font-bold">
+            {{ store.selectedMovie.Title }}
+          </h2>
           <p>
-            {{ selectedMovie?.Released }} &bull; {{ selectedMovie?.Runtime }}
+            {{ store.selectedMovie.Released }} &bull;
+            {{ store.selectedMovie.Runtime }}
           </p>
-          <p>{{ selectedMovie?.Genre }}</p>
+          <p>{{ store.selectedMovie.Genre }}</p>
           <p class="flex items-center gap-1">
             <span>⭐</span>
-            <span>{{ selectedMovie?.imdbRating }} IMDb rating</span>
+            <span>{{ store.selectedMovie.imdbRating }} IMDb rating</span>
           </p>
         </div>
       </header>
@@ -97,10 +88,10 @@ const close = inject('closeSelectedMovie') as () => void
           </button>
         </div>-->
         <p>
-          <em>{{ selectedMovie?.Plot }}</em>
+          <em>{{ store.selectedMovie.Plot }}</em>
         </p>
-        <p>Starring {{ selectedMovie?.Actors }}</p>
-        <p>Directed by {{ selectedMovie?.Director }}</p>
+        <p>Starring {{ store.selectedMovie.Actors }}</p>
+        <p>Directed by {{ store.selectedMovie.Director }}</p>
       </div>
     </template>
   </div>

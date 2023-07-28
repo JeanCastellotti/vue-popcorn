@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { inject } from 'vue'
-import type { Movie } from '@/App.vue'
+import { store, type Movie } from '@/store'
+import { computed } from 'vue'
 
-defineProps<Movie>()
+const props = defineProps<Movie>()
 
-const selectMovie = inject('selectMovie') as (movieID: string) => void
+const hasPoster = computed(() => props.Poster === 'N/A')
 </script>
 
 <template>
   <li
-    @click="selectMovie(imdbID)"
-    class="relative flex cursor-pointer items-center gap-x-10 px-12 py-4 transition-all hover:bg-[#343a40]"
+    @click="store.selectMovie(imdbID)"
+    class="relative flex cursor-pointer items-center gap-x-10 px-12 py-4 transition-all hover:bg-gray-700"
   >
-    <div
-      v-if="Poster === 'N/A'"
-      class="flex h-20 w-20 shrink-0 rounded bg-slate-600"
-    >
+    <div v-if="hasPoster" class="flex h-20 w-20 shrink-0 rounded bg-slate-600">
       <span class="m-auto text-4xl">?</span>
     </div>
     <img v-else :src="Poster" :alt="Title" class="w-20 object-cover" />
