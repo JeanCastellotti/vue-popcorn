@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide, reactive, toRef } from 'vue'
+import { ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 
 import TheHeader from '@/components/TheHeader.vue'
@@ -8,6 +8,9 @@ import AppLoader from './components/AppLoader.vue'
 import AppErrorMessage from './components/AppErrorMessage.vue'
 import MovieList from './components/MovieList.vue'
 import SelectedMovie from './components/SelectedMovie.vue'
+import WatchedMovieList from './components/WatchedMovieList.vue'
+import WatchedMovieSummary from './components/WatchedMovieSummary.vue'
+
 import { store } from './store'
 
 const apiKey = import.meta.env.VITE_API_KEY
@@ -40,22 +43,24 @@ watchDebounced(
 </script>
 
 <template>
-  <div
-    class="grid min-h-screen grid-rows-[auto,1fr] bg-gray-900 p-10 text-gray-300"
-  >
-    <TheHeader />
-    <main class="grid grid-cols-2 gap-8">
-      <AppPanel>
-        <AppLoader v-if="isLoading" class="absolute inset-0 m-auto" />
-        <AppErrorMessage v-else-if="error" :message="error" />
-        <MovieList v-else />
-      </AppPanel>
+  <div class="min-h-screen bg-gray-900 p-10 text-gray-300">
+    <div class="container mx-auto">
+      <TheHeader />
+      <main class="grid h-[calc(100vh-6rem-3*2.5rem)] grid-cols-2 gap-8">
+        <AppPanel>
+          <AppLoader v-if="isLoading" />
+          <AppErrorMessage v-else-if="error" :message="error" />
+          <MovieList v-else />
+        </AppPanel>
 
-      <AppPanel
-        class="sticky top-10 h-min max-h-[calc(100vh-5rem)] overflow-y-auto"
-      >
-        <SelectedMovie v-if="store.selectedMovieID" />
-      </AppPanel>
-    </main>
+        <AppPanel>
+          <SelectedMovie v-if="store.selectedMovieID" />
+          <div v-else class="flex h-full flex-col">
+            <WatchedMovieSummary />
+            <WatchedMovieList />
+          </div>
+        </AppPanel>
+      </main>
+    </div>
   </div>
 </template>

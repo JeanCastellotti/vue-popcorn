@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue'
 import AppLoader from './AppLoader.vue'
-import IconArrowUturnLeft from './IconArrowUturnLeft.vue'
+import IconArrowUturnLeft from './icons/IconArrowUturnLeft.vue'
 import { store } from '@/store'
 
 const apiKey = import.meta.env.VITE_API_KEY
@@ -26,11 +26,16 @@ watchEffect(async () => {
 })
 
 const hasPoster = computed(() => store.selectedMovie?.Poster === 'N/A')
+
+function addWatchedMovie() {
+  store.addWatchedMovie(store.selectedMovie!)
+  store.closeSelectedMovie()
+}
 </script>
 
 <template>
-  <div class="relative">
-    <AppLoader v-if="isLoading" class="mx-auto my-5" />
+  <div class="relative h-full">
+    <AppLoader v-if="isLoading" />
     <template v-else-if="store.selectedMovie">
       <button
         @click="store.closeSelectedMovie()"
@@ -63,12 +68,9 @@ const hasPoster = computed(() => store.selectedMovie?.Poster === 'N/A')
           </p>
         </div>
       </header>
-      <div class="space-y-5 p-16 text-lg">
-        <!--
-        <div
-          class="mb-3 flex flex-col justify-center space-y-3 rounded bg-[#343a40] px-5 py-4 font-semibold"
-        >
-           <div class="flex flex-col items-center gap-1">
+      <div class="space-y-5 p-10 text-lg">
+        <div class="mb-3 flex flex-col justify-center space-y-3">
+          <!-- <div class="flex flex-col items-center gap-1">
             <span>You already rated this movie</span>
             <div>
               <span>⭐</span>
@@ -79,14 +81,14 @@ const hasPoster = computed(() => store.selectedMovie?.Poster === 'N/A')
             size="{32}"
             class="justify-between"
             onSetRating="{setUserRating}" 
-          />
+          /> -->
           <button
-            @click="addToWatchedMovies"
-            class="cursor-pointer rounded bg-[#6741d9] px-3 py-1 font-bold text-[#dee2e6] transition hover:bg-[#7950f2]"
+            @click="addWatchedMovie"
+            class="cursor-pointer rounded bg-indigo-600 px-3 py-2 font-bold text-indigo-100 transition hover:bg-indigo-500"
           >
             Add to list
           </button>
-        </div>-->
+        </div>
         <p>
           <em>{{ store.selectedMovie.Plot }}</em>
         </p>
