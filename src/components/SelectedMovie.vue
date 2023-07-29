@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
+import { onKeyDown } from '@vueuse/core'
 
 import AppLoader from './AppLoader.vue'
 import SelectedMovieCloseButton from './SelectedMovieCloseButton.vue'
@@ -7,8 +8,6 @@ import SelectedMovieHeader from './SelectedMovieHeader.vue'
 import SelectedMovieDetails from './SelectedMovieDetails.vue'
 
 import { store } from '@/store'
-
-import { useKey } from '@/composables/useKey'
 
 const apiKey = import.meta.env.VITE_API_KEY
 const apiUrl = import.meta.env.VITE_API_URL
@@ -31,7 +30,9 @@ watchEffect(async () => {
   }
 })
 
-useKey('Escape', store.closeSelectedMovie.bind(store))
+onKeyDown('Escape', () => {
+  store.closeSelectedMovie()
+})
 </script>
 
 <template>
