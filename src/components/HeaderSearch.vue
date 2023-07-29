@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { store } from '@/store'
+import { onKeyDown } from '@vueuse/core'
+
+const input = ref<HTMLInputElement | null>(null)
+
+onKeyDown('Enter', () => {
+  input.value?.focus()
+})
 </script>
 
 <template>
   <input
+    ref="input"
     :value="store.query"
     @input="store.updateQuery(($event.target as HTMLInputElement).value)"
     placeholder="Search movies..."
