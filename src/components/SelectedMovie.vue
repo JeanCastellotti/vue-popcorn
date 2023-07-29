@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, onMounted, onBeforeUnmount } from 'vue'
 import AppLoader from './AppLoader.vue'
 import IconArrowUturnLeft from './icons/IconArrowUturnLeft.vue'
 import { store } from '@/store'
@@ -31,6 +31,17 @@ function addWatchedMovie() {
   store.addWatchedMovie(store.selectedMovie!)
   store.closeSelectedMovie()
 }
+
+const handler = ref<((this: Document, ev: KeyboardEvent) => any) | null>(null)
+
+onMounted(() => {
+  handler.value = (evt: KeyboardEvent) => {
+    if (evt.code === 'Escape') store.closeSelectedMovie()
+  }
+  document.addEventListener('keydown', handler.value)
+})
+
+onBeforeUnmount(() => document.removeEventListener('keydown', handler.value!))
 </script>
 
 <template>
