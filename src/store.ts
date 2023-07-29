@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
 export interface Movie {
   Title: string
@@ -16,39 +16,15 @@ export interface Movie {
   Genre?: string
 }
 
-// interface SelectedMovie {
-//   Title: string
-//   Year: string
-//   Poster: string
-//   Runtime: string
-//   imdbRating: string
-//   userRating: string
-//   Plot: string
-//   Released: string
-//   Actors: string
-//   Director: string
-//   Genre: string
-// }
-
-// interface WatchedMovie {
-//   imdbID: string
-//   Title: string
-//   Year: string
-//   Poster: string
-//   Runtime: string
-//   imdbRating: string
-//   userRating: string
-// }
-
 interface Store {
   query: string
   movies: Movie[]
   watchedMovies: Movie[]
   selectedMovieID: string | null
   selectedMovie: Movie | null
+  updateQuery: (value: string) => void
   selectMovie: (id: string) => void
   closeSelectedMovie: () => void
-  updateQuery: (value: string) => void
   addWatchedMovie: (movie: Movie) => void
   deleteWatchedMovie: (id: string) => void
 }
@@ -60,7 +36,11 @@ export const store = reactive<Store>({
   selectedMovieID: null,
   selectedMovie: null,
 
-  selectMovie(id) {
+  updateQuery(value: string) {
+    this.query = value
+  },
+
+  selectMovie(id: string) {
     this.selectedMovieID = this.selectedMovieID === id ? null : id
   },
 
@@ -68,17 +48,21 @@ export const store = reactive<Store>({
     this.selectedMovieID = null
   },
 
-  updateQuery(value) {
-    this.query = value
-  },
-
-  addWatchedMovie(movie) {
+  addWatchedMovie(movie: Movie) {
     this.watchedMovies.push(movie)
+    this.closeSelectedMovie()
   },
 
-  deleteWatchedMovie(id) {
+  deleteWatchedMovie(id: string) {
     this.watchedMovies = this.watchedMovies.filter(
       (movie) => movie.imdbID !== id
     )
   },
 })
+
+watch(
+  () => store.watchedMovies,
+  () => {
+    localStorage.setItem('watchedMovies', JSON.stringify(store.watchedMovies))
+  }
+)

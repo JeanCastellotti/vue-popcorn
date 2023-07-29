@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { store } from '@/store'
 import WatchedMovieListItem from './WatchedMovieListItem.vue'
+import { store } from '@/store'
 </script>
 
 <template>

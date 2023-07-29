@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { watchDebounced } from '@vueuse/core'
+import { ref, onMounted } from 'vue'
+import { useStorage, watchDebounced } from '@vueuse/core'
 
 import TheHeader from '@/components/TheHeader.vue'
 import AppPanel from './components/AppPanel.vue'
@@ -18,6 +18,10 @@ const apiUrl = import.meta.env.VITE_API_URL
 
 const isLoading = ref(false)
 const error = ref<string | null>(null)
+
+onMounted(() => {
+  store.watchedMovies = useStorage('watchedMovies', []).value
+})
 
 watchDebounced(
   () => store.query,
