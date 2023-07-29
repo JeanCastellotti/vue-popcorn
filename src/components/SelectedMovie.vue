@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 import AppLoader from './AppLoader.vue'
 import SelectedMovieCloseButton from './SelectedMovieCloseButton.vue'
@@ -7,6 +7,8 @@ import SelectedMovieHeader from './SelectedMovieHeader.vue'
 import SelectedMovieDetails from './SelectedMovieDetails.vue'
 
 import { store } from '@/store'
+
+import { useKey } from '@/composables/useKey'
 
 const apiKey = import.meta.env.VITE_API_KEY
 const apiUrl = import.meta.env.VITE_API_URL
@@ -29,18 +31,7 @@ watchEffect(async () => {
   }
 })
 
-type KeyboardEventListener = (this: Document, ev: KeyboardEvent) => any
-
-const handler = ref<KeyboardEventListener | null>(null)
-
-onMounted(() => {
-  handler.value = (evt: KeyboardEvent) => {
-    if (evt.code === 'Escape') store.closeSelectedMovie()
-  }
-  document.addEventListener('keydown', handler.value)
-})
-
-onBeforeUnmount(() => document.removeEventListener('keydown', handler.value!))
+useKey('Escape', store.closeSelectedMovie.bind(store))
 </script>
 
 <template>
