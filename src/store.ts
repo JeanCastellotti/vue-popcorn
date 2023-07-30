@@ -49,20 +49,17 @@ export const store = reactive<Store>({
   },
 
   addWatchedMovie(movie: Movie) {
+    console.log('add')
     this.watchedMovies.push(movie)
     this.closeSelectedMovie()
+    localStorage.setItem('watchedMovies', JSON.stringify(this.watchedMovies))
   },
 
   deleteWatchedMovie(id: string) {
+    console.log('delete')
     this.watchedMovies = this.watchedMovies.filter(
       (movie) => movie.imdbID !== id
     )
+    localStorage.setItem('watchedMovies', JSON.stringify(this.watchedMovies))
   },
 })
-
-watch(
-  () => store.watchedMovies,
-  () => {
-    localStorage.setItem('watchedMovies', JSON.stringify(store.watchedMovies))
-  }
-)
